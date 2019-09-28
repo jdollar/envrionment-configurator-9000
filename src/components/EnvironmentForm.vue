@@ -1,14 +1,40 @@
 <template>
-  <div class="form">
-    <div class="container">
+  <v-container>
+    <v-row
+      v-for="envVal in alphabeticalValues"
+      v-bind:key="generateKey(envVal.key)"
+      no-gutters
+    >
+      <v-col
+        cols="1"
+      >
+        {{ envVal.enabled }}
+      </v-col>
+      <v-col
+        cols="7"
+      >
+        {{ envVal.key }}
+      </v-col>
+      <v-col
+        cols="2"
+      >
+        {{ envVal.value }}
+      </v-col>
+      <v-col
+        cols="2"
+      >
+        Button
+      </v-col>
+    </v-row>
+  </v-container>
+    <!-- <div class="container">
       <template v-for="envVal in alphabeticalValues">
         <div v-bind:key="generateKey(envVal.key + 'enabled')">{{ envVal.enabled}}</div>
         <div v-bind:key="generateKey(envVal.key + 'key')">{{ envVal.key }}</div>
         <div v-bind:key="generateKey(envVal.key + 'value')">{{ envVal.value }}</div>
         <div v-bind:key="generateKey(envVal.key + 'button')">Button</div>
       </template>
-    </div>
-  </div>
+    </div> -->
 </template>
 
 <script>
@@ -48,9 +74,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-.form
-  margin-top 1em
-.container
-  display grid
-  grid-template-columns 10% 50% 20% 20%
+.col
+  word-wrap anywhere
+  text-align start
 </style>

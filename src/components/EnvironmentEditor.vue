@@ -1,16 +1,24 @@
 <template>
   <div class="environment-editor">
-    <selector
+    <v-select
+      label="Workspace"
       v-model="selectedWorkspace"
       v-on:change="selectWorkspace"
       v-bind:items="availableWorkspaces"
     />
-    <selector
+    <v-select
       v-if="availableEnvironments.length > 0"
+      label="Environment"
       v-model="selectedEnvironment"
       v-on:change="selectEnvironment"
       v-bind:items="availableEnvironments"
     />
+    <v-progress-circular
+      v-if="loading"
+      indeterminate
+      color="primary"
+    ></v-progress-circular>
+
     <environment-form
       v-bind:environment="environmentBeingEdited"
     />
@@ -25,9 +33,10 @@ import {
   filter,
   path,
   pathOr,
+  reduce,
 } from 'ramda';
 import { getWorkspaces, getWorkspaceEnvironments, getEnvironment } from '../services/postman';
-import Selector from './Selector.vue';
+// import Selector from './Selector.vue';
 import EnvironmentForm from './EnvironmentForm.vue';
 
 const getTeamWorkspaces = () => {
@@ -49,14 +58,27 @@ const getTeamWorkspaces = () => {
     .catch(console.error);
 };
 
+const formatResponseForSelect = items => reduce(
+  (acc, item) => ([
+    ...acc,
+    {
+      text: path(['name'], item),
+      value: item.uid || item.id,
+    },
+  ]),
+  [],
+  items,
+);
+
 export default {
   name: 'EnvironmentEditor',
   components: {
-    Selector,
+    // Selector,
     EnvironmentForm,
   },
   data() {
     return {
+      loading: false,
       selectedWorkspace: undefined,
       availableWorkspaces: [],
       selectedEnvironment: undefined,
@@ -67,7 +89,7 @@ export default {
   mounted() {
     return getTeamWorkspaces()
       .then((workspaces) => {
-        this.availableWorkspaces = workspaces;
+        this.availableWorkspaces = formatResponseForSelect(workspaces);
       });
   },
   methods: {
@@ -78,8 +100,7 @@ export default {
 
       getWorkspaceEnvironments(workspaceId)
         .then((environments) => {
-          console.log(environments);
-          this.availableEnvironments = environments;
+          this.availableEnvironments = formatResponseForSelect(environments);
         });
     },
     selectEnvironment(environment) {

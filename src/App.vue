@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <EnvironmentEditor />
+    <v-app>
+      <v-content>
+        <EnvironmentEditor />
+      </v-content>
+    </v-app>
   </div>
 </template>
 
